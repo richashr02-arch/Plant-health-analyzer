@@ -66,18 +66,18 @@ const InsightsPage: React.FC = () => {
         <>
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            
+
             {/* Sentiment Analysis */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 flex flex-col">
                 <div className="flex items-center gap-2 mb-6">
                     <TrendingUp className="w-5 h-5 text-emerald-600" />
                     <h2 className="text-lg font-bold text-stone-800">Sentiment Analysis</h2>
                 </div>
-                
+
                 {/* Fixed height container for Recharts */}
-                <div className="h-[300px] w-full min-h-[300px]">
+                <div style={{ height: '300px', width: '100%' }}>
                     {sentimentData.reduce((acc, curr) => acc + curr.value, 0) > 0 ? (
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height={300}>
                         <PieChart>
                             <Pie
                                 data={sentimentData}
@@ -87,13 +87,13 @@ const InsightsPage: React.FC = () => {
                                 outerRadius={100}
                                 paddingAngle={5}
                                 dataKey="value"
-                                isAnimationActive={false} // Disable animation to debug rendering
+                                isAnimationActive={false}
                             >
                             {sentimentData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.fill} />
                             ))}
                             </Pie>
-                            <Tooltip 
+                            <Tooltip
                                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                             />
                             <Legend verticalAlign="bottom" height={36} iconType="circle" />
@@ -113,32 +113,32 @@ const InsightsPage: React.FC = () => {
                     <MessageSquare className="w-5 h-5 text-blue-600" />
                     <h2 className="text-lg font-bold text-stone-800">Common Keywords</h2>
                 </div>
-                
+
                 {/* Fixed height container for Recharts */}
-                <div className="h-[300px] w-full min-h-[300px]">
+                <div style={{ height: '300px', width: '100%' }}>
                     {keywordData.length > 0 ? (
-                        <ResponsiveContainer width="100%" height="100%">
-                        <BarChart 
-                            data={keywordData} 
-                            layout="vertical" 
-                            margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
+                        <ResponsiveContainer width="100%" height={300}>
+                        <BarChart
+                            data={keywordData}
+                            layout="vertical"
+                            margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
                         >
                             <XAxis type="number" hide />
-                            <YAxis 
-                                dataKey="keyword" 
-                                type="category" 
-                                width={100} 
-                                tick={{fill: '#57534e', fontSize: 12}} 
+                            <YAxis
+                                dataKey="keyword"
+                                type="category"
+                                width={90}
+                                tick={{fill: '#57534e', fontSize: 12}}
                                 interval={0}
                             />
-                            <Tooltip 
-                                cursor={{fill: '#f5f5f4'}} 
+                            <Tooltip
+                                cursor={{fill: '#f5f5f4'}}
                                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                             />
-                            <Bar 
-                                dataKey="count" 
-                                fill="#10b981" 
-                                radius={[0, 4, 4, 0]} 
+                            <Bar
+                                dataKey="count"
+                                fill="#10b981"
+                                radius={[0, 4, 4, 0]}
                                 barSize={24}
                                 isAnimationActive={false}
                             />
