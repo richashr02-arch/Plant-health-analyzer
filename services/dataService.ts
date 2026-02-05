@@ -80,44 +80,47 @@ export const getReviews = async (): Promise<ReviewData[]> => {
     const dataRows = rows.slice(1);
     
     return dataRows.map((row, index) => {
-      // Relaxed check: We need at least 5 columns to be useful
-      if (row.length < 5) {
+      // We need at least 6 columns
+      if (row.length < 6) {
+        console.warn(`Row ${index} has insufficient columns: ${row.length}`, row);
         return null;
       }
 
       // Safe access helper
       const getCol = (i: number) => row[i] ? row[i].trim() : "";
 
-      // Corrected Mapping based on known CSV structure:
+      // Actual CSV structure from Google Sheet:
       // 0: Review_ID
       // 1: Customer_Name
       // 2: Review_Date
       // 3: Review_Text
       // 4: Sentiment
-      // 5: Summary
-      // 6: Keywords
-
-      const keywordsRaw = getCol(6); 
-      // Clean surrounding quotes if parser missed them (extra safety)
-      const cleanKeywordsRaw = keywordsRaw.replace(/^"|"$/g, '');
-      const keywords = cleanKeywordsRaw.split(',').map(k => k.trim()).filter(k => k.length > 0);
+      // 5: Sentiment_Reason
 
       // Normalize Sentiment (Column 4)
       let sentimentRaw = getCol(4);
       let sentiment: 'Positive' | 'Negative' | 'Neutral' = 'Neutral';
-      
+
       if (sentimentRaw.match(/positive/i)) sentiment = 'Positive';
       else if (sentimentRaw.match(/negative/i)) sentiment = 'Negative';
       else if (sentimentRaw.match(/neutral/i)) sentiment = 'Neutral';
 
+      // Extract keywords from review text (simple word extraction)
+      const reviewText = getCol(3);
+      const keywords = reviewText
+        .toLowerCase()
+        .split(/[\s,.-]+/)
+        .filter(word => word.length > 3 && !['that', 'this', 'with', 'from', 'were', 'been', 'have', 'very', 'also', 'just', 'like', 'only', 'more', 'than', 'which', 'their'].includes(word))
+        .slice(0, 5);
+
       return {
         id: Number(getCol(0)) || Math.random(),
         customerName: getCol(1) || "Anonymous",
-        reviewText: getCol(3) || "",     
-        sentiment: sentiment,            
-        summary: getCol(5) || "No summary", 
-        keywords: keywords,              
-        date: getCol(2) || new Date().toISOString().split('T')[0] 
+        reviewText: reviewText || "",
+        sentiment: sentiment,
+        summary: getCol(5) || "No summary",
+        keywords: keywords,
+        date: getCol(2) || new Date().toISOString().split('T')[0]
       };
     })
     .filter((r): r is ReviewData => r !== null && r.reviewText.length > 0); 
