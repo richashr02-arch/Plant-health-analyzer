@@ -1,0 +1,7 @@
+{
+  "name": "BotaniScan AI",
+  "description": "An intelligent plant identification and disease diagnosis tool powered by Gemini AI.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
